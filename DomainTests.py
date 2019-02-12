@@ -57,6 +57,3 @@ def test_reward():
     reward = testDomain.reward((0, 0), testDomain.RIGHT)
     assert reward == 0
 
-
-def test_expectedReward():
-    pass

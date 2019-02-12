@@ -26,6 +26,10 @@ class Game:
         print("End Position : " + str(position))
         return position, cumulatedReward
 
+    def computeError(self, n):
+        Br = np.max(self.domain.getBoard())
+        return (pow(self.domain.getGamma(), n) * Br) / (1 - self.domain.getGamma())
+
     def computeExpectedReturnMatrix(self, n):
         if len(self.expectedReturn) > n:
             return self.expectedReturn[n]
@@ -46,3 +50,24 @@ class Game:
 
     def computeExpectedReturnState(self, position, n):
         return self.computeExpectedReturnMatrix(n)[position[1]][position[0]]
+
+    def approximateJ(self, error):
+        n = 0
+        currentError = self.computeError(n)
+        while currentError >= error:
+            n += 1
+            self.computeExpectedReturnMatrix(n)
+            currentError = self.computeError(n)
+        return(self.computeExpectedReturnMatrix(n), currentError)
+
+    def displayExpectedRetrun(self, n=None):
+        print("Matrix of the Expected Retrun :")
+        if n is None:
+            for i in range(len(self.expectedReturn)):
+                print("N = " + str(i))
+                print("Error = " + str(self.computeError(i)))
+                print(self.expectedReturn[i], "\n")
+        else:
+            print("N = " + str(n))
+            print("Error = " + str(self.computeError(n)))
+            print(self.expectedReturn[n])

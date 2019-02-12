@@ -43,3 +43,16 @@ def test_computeExpectedReturn():
     testGame.computeExpectedReturnMatrix(3)
     tmp  = testGame.getExpectedReturn()
     assert len(tmp) == 4
+
+
+def test_computeError():
+    testDomain = Domain(testBoard)
+    testGame = Game(testDomain, downPolicy)
+    assert testGame.computeError(0) - 800 < 0.001
+    assert testGame.computeError(5) - 760.792 < 0.001
+
+def test_approximateJ():
+    testDomain = Domain(testBoard)
+    testGame = Game(testDomain, downPolicy)
+    testGame.approximateJ(1)
+    assert len(testGame.getExpectedReturn()) == 667

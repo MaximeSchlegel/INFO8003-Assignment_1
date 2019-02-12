@@ -20,8 +20,8 @@ myGame = Game(myDomain, upPolicy)
 myGame.play(10)
 
 myGame.computeExpectedReturnMatrix(5)
-matrix = myGame.getExpectedReturn()
-print("\nMatrix of the Expected Retrun :")
-for i in range(len(matrix)):
-    print("N = " + str(i))
-    print(matrix[i], "\n")
+myGame.displayExpectedRetrun(3)
+
+myGame.approximateJ(0.1)
+myGame.displayExpectedRetrun()
+
