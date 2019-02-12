@@ -1,4 +1,4 @@
-#Deterministic = Stohastic with B=0
+#Deterministic = Stohastic with Beta=0
 
 import random as rdm
 
@@ -15,35 +15,56 @@ class Domain:
         self.beta = beta  # Probability of returning to the origin
         self.board = board  # give the reward obtain by landing on a cell
         self.y_max, self.x_max = board.shape
-        self.w = rdm.random()  # Noise of the current time
+        self.w = rdm.uniform(0, 1)  # Noise of the current time
+
+    def getGamma (self):
+        return self.gamma
+
+    def getBeta(self):
+        return self.beta
+
+    def getBoard(self):
+        return self.board
+
+    def getShape(self):
+        return self.x_max, self.y_max
 
     def drawNoise(self):
+        """
+        Draw a new value for the noize
+        """
         self.w = rdm.uniform(0, 1)
 
     def deterministicMove(self, position, move):
         """
         return the position of the player starting in the position given and excuting this move
         """
-        x_move, y_move = move
-        x_pos, y_pos = position
-        x_pos = min(max(x_pos + x_move, 0), self.x_max-1)
-        y_pos = min(max(y_pos + y_move, 0), self.y_max-1)
-        return x_pos, y_pos
+        if move in Domain.VALID_ACTIONS:
+            x_move, y_move = move
+            x_pos, y_pos = position
+            x_pos = min(max(x_pos + x_move, 0), self.x_max-1)
+            y_pos = min(max(y_pos + y_move, 0), self.y_max-1)
+            return x_pos, y_pos
 
     def move(self, position, move):
-        x_pos, y_pos = (0, 0)
-        if self.w <= 1 - self.beta:
-            x_pos, y_pos = self.deterministicMove(position, move)
-        return x_pos, y_pos
+        if move in Domain.VALID_ACTIONS:
+            x_pos, y_pos = (0, 0)
+            if self.w <= 1 - self.beta:
+                x_pos, y_pos = self.deterministicMove(position, move)
+            return x_pos, y_pos
 
     def deterministicReward(self, position, move):
         """
         Return the reward that the player will get if he make the move given
+        regardless of the noise
         """
         x, y = self.deterministicMove(position, move)
         return self.board[y][x]
 
     def reward(self, position, move):
+        """
+        Compute the reward of the move according to the stochastic process
+        """
         x, y = self.move(position, move)
         return self.board[y][x]
 

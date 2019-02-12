@@ -7,16 +7,15 @@ testBoard = np.array([[i+j for i in range(5)] for j in range(5)])
 def test_createDomain():
     testDomain = Domain(testBoard, .25, .5)
     assert testDomain is not None
-    assert np.array_equal(testDomain.board, testBoard)
-    assert testDomain.x_max == 5
-    assert testDomain.y_max == 5
-    assert testDomain.beta == 0.25
-    assert testDomain.gamma == 0.5
+    assert np.array_equal(testDomain.getBoard(), testBoard)
+    assert testDomain.getShape() == (5, 5)
+    assert testDomain.getBeta() == 0.25
+    assert testDomain.getGamma() == 0.5
 
 
 def test_deterministicMove_normalMove():
     testDomain = Domain(testBoard, .25)
-    move = (3, 3)
+    move = (1, 0)
     pos = testDomain.deterministicMove((0, 0), move)
     assert pos == move
 
@@ -59,8 +58,5 @@ def test_reward():
     assert reward == 0
 
 
-def test_getResultProba():
-    testDomain = Domain(testBoard, .25)
-    proba = testDomain.getResultProbability((0, 0), testDomain.DOWN)
-    assert proba == [(testDomain.DOWN, .75),
-                     ((0, 0), .25)]
+def test_expectedReward():
+    pass
