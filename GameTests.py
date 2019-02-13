@@ -12,11 +12,9 @@ def downPolicy(domain: Domain, position):
 def test_creationGame():
     testDomain = Domain(testBoard)
     testGame = Game(testDomain, downPolicy)
-    print("\n")
-    print(testBoard)
     assert testGame is not None
-    assert testGame.domain == testDomain
-    assert testGame.policy == downPolicy
+    assert testGame.getDomain() == testDomain
+    assert testGame.getPolicy() == downPolicy
     tmp = testGame.getExpectedReturn()
     assert tmp[0][0][0] == 0
 
@@ -41,7 +39,7 @@ def test_computeExpectedReturn():
     assert tmp[-1][0][0] == 0.75
     assert tmp[-1][4][4] == 6
     testGame.computeExpectedReturnMatrix(3)
-    tmp  = testGame.getExpectedReturn()
+    tmp = testGame.getExpectedReturn()
     assert len(tmp) == 4
 
 
@@ -50,6 +48,7 @@ def test_computeError():
     testGame = Game(testDomain, downPolicy)
     assert testGame.computeError(0) - 800 < 0.001
     assert testGame.computeError(5) - 760.792 < 0.001
+
 
 def test_approximateJ():
     testDomain = Domain(testBoard)

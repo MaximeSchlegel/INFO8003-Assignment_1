@@ -1,4 +1,4 @@
-#Deterministic = Stohastic with Beta=0
+# Deterministic = Stohastic with Beta=0
 
 import random as rdm
 
@@ -11,6 +11,7 @@ class Domain:
     VALID_ACTIONS = [UP, RIGHT, DOWN, LEFT]
 
     def __init__(self, board, beta=0, gamma=0.99):
+        # By default a deterministic domain is create
         self.gamma = gamma  # Discount factor
         self.beta = beta  # Probability of returning to the origin
         self.board = board  # give the reward obtain by landing on a cell
@@ -30,15 +31,9 @@ class Domain:
         return self.x_max, self.y_max
 
     def drawNoise(self):
-        """
-        Draw a new value for the noize
-        """
         self.w = rdm.uniform(0, 1)
 
     def deterministicMove(self, position, move):
-        """
-        return the position of the player starting in the position given and excuting this move
-        """
         if move in Domain.VALID_ACTIONS:
             x_move, y_move = move
             x_pos, y_pos = position
@@ -54,17 +49,10 @@ class Domain:
             return x_pos, y_pos
 
     def deterministicReward(self, position, move):
-        """
-        Return the reward that the player will get if he make the move given
-        regardless of the noise
-        """
         x, y = self.deterministicMove(position, move)
         return self.board[y][x]
 
     def reward(self, position, move):
-        """
-        Compute the reward of the move according to the stochastic process
-        """
         x, y = self.move(position, move)
         return self.board[y][x]
 

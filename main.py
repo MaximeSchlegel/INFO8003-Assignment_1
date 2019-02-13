@@ -10,18 +10,33 @@ myBoard = np.array([[-3, 1, -5, 0, 19],
                     [-20, -17, -4, -3, 9]])
 print(myBoard)
 
+
 def upPolicy(domain, position):
     return domain.UP
 
-myDomain = Domain(myBoard, .25)
-#Here the domain is Stochastic to get a Determistic Domain beta must be 0
-myGame = Game(myDomain, upPolicy)
+# Deterministic Domain
+print("Deterministic Domain : ")
+DDomain = Domain(myBoard)
+DGame = Game(DDomain, upPolicy)
 
-myGame.play(10)
+DGame.play(10, display=True)
 
-myGame.computeExpectedReturnMatrix(5)
-myGame.displayExpectedRetrun(3)
+DGame.computeExpectedReturnMatrix(5)
+DGame.displayExpectedRetrun(2)
 
-myGame.approximateJ(0.1)
-myGame.displayExpectedRetrun()
+DGame.approximateJ(0.1)
+DGame.displayExpectedRetrun(-1)
 
+#Stochastic Domain
+print("\nStochastic Domain")
+SDomain = Domain(myBoard, .25)
+
+SGame = Game(SDomain, upPolicy)
+
+SGame.play(10, display=True)
+
+SGame.computeExpectedReturnMatrix(5)
+SGame.displayExpectedRetrun(2)
+
+SGame.approximateJ(0.001)
+SGame.displayExpectedRetrun(-1)
