@@ -1,6 +1,7 @@
-# Deterministic = Stohastic with Beta=0
+# Deterministic = Stochastic with Beta=0
 
 import random as rdm
+import numpy as np
 
 
 class Domain:
@@ -17,6 +18,7 @@ class Domain:
         self.board = board  # give the reward obtain by landing on a cell
         self.y_max, self.x_max = board.shape
         self.w = rdm.uniform(0, 1)  # Noise of the current time
+        self.maxReward = np.max(board)
 
     def getGamma (self):
         return self.gamma
@@ -33,20 +35,36 @@ class Domain:
     def drawNoise(self):
         self.w = rdm.uniform(0, 1)
 
+    def getMaxReward(self):
+        return self.maxReward
+
     def deterministicMove(self, position, move):
-        if move in Domain.VALID_ACTIONS:
-            x_move, y_move = move
-            x_pos, y_pos = position
-            x_pos = min(max(x_pos + x_move, 0), self.x_max-1)
-            y_pos = min(max(y_pos + y_move, 0), self.y_max-1)
-            return x_pos, y_pos
+        assert move in Domain.VALID_ACTIONS, "Please use a valid move"
+        x_move, y_move = move
+        x_pos, y_pos = position
+        x_pos = min(max(x_pos + x_move, 0), self.x_max-1)
+        y_pos = min(max(y_pos + y_move, 0), self.y_max-1)
+        return x_pos, y_pos
 
     def move(self, position, move):
-        if move in Domain.VALID_ACTIONS:
-            x_pos, y_pos = (0, 0)
-            if self.w <= 1 - self.beta:
-                x_pos, y_pos = self.deterministicMove(position, move)
-            return x_pos, y_pos
+        assert move in Domain.VALID_ACTIONS, "Please use a valid move"
+        x_pos, y_pos = (0, 0)
+        if self.w <= 1 - self.beta:
+            x_pos, y_pos = self.deterministicMove(position, move)
+        return x_pos, y_pos
+
+    def moveResult(self, initialPosition, move):
+        res = [(self.deterministicMove(initialPosition, move), 1-self.beta)]
+        if self.beta != 0:
+            res.append(((0, 0), self.beta))
+        return res
+
+    def computeProbability(self,initialPosition, move, finalState):
+        if finalState == (0, 0):
+            return self.beta
+        if self.deterministicMove(initialPosition, move) == finalState:
+            return 1-self.beta
+        return 0
 
     def deterministicReward(self, position, move):
         x, y = self.deterministicMove(position, move)
@@ -56,5 +74,5 @@ class Domain:
         x, y = self.move(position, move)
         return self.board[y][x]
 
-    def expectedReaward(self, position, move):
+    def expectedReward(self, position, move):
         return ((1 - self.beta)*self.deterministicReward(position, move)) + (self.beta * self.board[0][0])
