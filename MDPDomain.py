@@ -1,4 +1,4 @@
-class MDP_Domain:
+class MDPDomain:
 
     def __init__(self, ht=None):
         self.maxReward = 0

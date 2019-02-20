@@ -23,12 +23,6 @@ class Domain:
     def getGamma (self):
         return self.gamma
 
-    def getBeta(self):
-        return self.beta
-
-    def getBoard(self):
-        return self.board
-
     def getShape(self):
         return self.x_max, self.y_max
 

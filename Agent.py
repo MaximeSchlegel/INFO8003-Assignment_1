@@ -1,6 +1,6 @@
 import numpy as np
 import random as rdm
-from MDP_Domain import MDP_Domain
+from MDPDomain import MDPDomain
 
 
 class Agent:
@@ -14,13 +14,14 @@ class Agent:
         self.expectedReturn = [np.array([[0. for i in range(x_max)] for j in range(y_max)])]
         self.actionSate = [np.array([[{action: 0. for action in self.domain.VALID_ACTIONS} for i in range(x_max)] for j in range(y_max)])]
         if useMDPEmulation:
-            self.emulatedDomain = MDP_Domain()
+            self.emulatedDomain = MDPDomain()
             self.explore(iterExplore)
+
     def getDomain(self):
         return self.domain
 
     def getEmulatedDomain(self):
-        assert type(self.emulatedDomain) == MDP_Domain, "MDP Domain emulation is nit activated"
+        assert type(self.emulatedDomain) == MDPDomain, "MDP Domain emulation is nit activated"
         return self.emulatedDomain
 
     def getPolicy(self):
@@ -55,12 +56,14 @@ class Agent:
             print("End Position : " + str(position))
         return ht
 
-    def computeExpectedReturn(self, n, state=None):
+    def computeExpectedReturn(self, n, state=None, erase=False):
+        x_max, y_max = self.domain.getShape()
+        if erase:
+            self.expectedReturn = [np.array([[0. for i in range(x_max)] for j in range(y_max)])]
         if len(self.expectedReturn) > n:
             if state is not None:
                 return self.expectedReturn[n][state[0]][state[1]]
             return self.expectedReturn[n]
-        x_max, y_max = self.domain.getShape()
         for it in range(n+1-len(self.expectedReturn)):
             previousExpectedReturn = self.expectedReturn[it-1]
             self.expectedReturn.append(np.array([[0. for i in range(x_max)] for j in range(y_max)]))
@@ -78,7 +81,10 @@ class Agent:
     def computeErrorExpectedReturn(self, n):
         return (pow(self.domain.getGamma(), n) * self.emulatedDomain.getMaxReward()) / (1 - self.domain.getGamma())
 
-    def approximateJ(self, error=0.0001):
+    def approximateJ(self, error=0.0001, erase=False):
+        if erase:
+            x_max, y_max = self.domain.getShape()
+            self.expectedReturn = [np.array([[0. for i in range(x_max)] for j in range(y_max)])]
         n = 0
         currentError = self.computeErrorExpectedReturn(n)
         while currentError >= error:
@@ -104,12 +110,14 @@ class Agent:
             with np.printoptions(precision=2):
                 print(self.expectedReturn[i], "\n")
 
-    def computeActionState(self, n, state=None):
+    def computeActionState(self, n, state=None, erase=False):
+        x_max, y_max = self.domain.getShape()
+        if erase:
+            self.actionSate = [np.array([[{action: 0. for action in self.domain.VALID_ACTIONS} for i in range(x_max)] for j in range(y_max)])]
         if len(self.actionSate) > n:
             if state is not None:
                 return self.actionSate[n][state[0]][state[1]]
             return self.actionSate[n]
-        x_max,y_max = self.domain.getShape()
         for it in range(n+1-len(self.actionSate)):
             previousActionState = self.actionSate[it-1]
             self.actionSate.append(np.array([[{action: 0. for action in self.domain.VALID_ACTIONS} for i in range(x_max)] for j in range(y_max)]))
@@ -127,7 +135,10 @@ class Agent:
     def computeErrorActionState(self, n):
         return (2 * pow(self.domain.getGamma(), n) * self.emulatedDomain.getMaxReward()) / (pow(1 - self.domain.getGamma(), 2))
 
-    def approximatQ(self, error=0.0001):
+    def approximateQ(self, error=0.0001, erase=False):
+        if erase:
+            x_max, y_max = self.domain.getShape()
+            self.actionSate = [np.array([[{action: 0. for action in self.domain.VALID_ACTIONS} for i in range(x_max)] for j in range(y_max)])]
         n = 0
         currentError = self.computeErrorActionState(n)
         while currentError >= error:
@@ -158,7 +169,7 @@ class Agent:
     def extractOptimalPolicy(self, error = 0.0001, use=False):
         n = len(self.actionSate)
         if self.computeErrorActionState(n) > error:
-            self.approximatQ(error)
+            self.approximateQ(error)
         x_max, y_max = self.domain.getShape()
         finalQ = self.actionSate[-1]
         optimalPolicy = [[max(finalQ[j][i], key=finalQ[j][i].get) for i in range(x_max)] for j in range(y_max)]
@@ -180,8 +191,8 @@ class Agent:
     def restoreInitialPolicy(self):
         self.policy = self.initialPolicy
 
-    def explore(self, n=1000):
-        assert type(self.emulatedDomain) == MDP_Domain, "MDP Domain Emlation is not activated"
+    def explore(self, n=100):
+        assert type(self.emulatedDomain) == MDPDomain, "MDP Domain Emlation is not activated"
         seen = set()
         def explorePolicy(domain, positon):
             arg = seen
@@ -194,5 +205,6 @@ class Agent:
         self.policy = explorePolicy
         x_max, y_max = self.domain.getShape()
         ht = self.play(n, (rdm.randint(0,x_max), rdm.randint(0,y_max)))
+        print(ht)
         self.emulatedDomain.analyzeArray(ht)
         self.policy = oldpolicy

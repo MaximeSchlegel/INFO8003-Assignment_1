@@ -7,9 +7,9 @@ testBoard = np.array([[i+j for i in range(5)] for j in range(5)])
 def test_createDomain():
     testDomain = Domain(testBoard, .25, .5)
     assert testDomain is not None
-    assert np.array_equal(testDomain.getBoard(), testBoard)
+    assert np.array_equal(testDomain.board, testBoard)
     assert testDomain.getShape() == (5, 5)
-    assert testDomain.getBeta() == 0.25
+    assert testDomain.beta == 0.25
     assert testDomain.getGamma() == 0.5
 
 
