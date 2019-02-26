@@ -1,9 +1,10 @@
 import numpy as np
 import random as rdm
-import matplotlib.pyplot as plt
-from Domain import Domain
-from MDPDomain import MDPDomain
-from Agent import Agent
+from src.Domain import Domain
+from src.Agent import Agent
+from src.MDPAgent import MDPAgent
+from src.QAgent import QAgent
+from src.IAgent import IAgent
 
 
 myBoard = np.array([[-3,   1,  -5,  0,   19],
@@ -11,168 +12,158 @@ myBoard = np.array([[-3,   1,  -5,  0,   19],
                     [ 5,  -8,   4,  1,  -8],
                     [ 6,  -9,   4,  19, -5],
                     [-20, -17, -4, -3,   9]])
-print(myBoard)
 
-def upPolicy(domain, position):
+
+def up_policy(domain, position):
     return domain.UP
 
 
-def randomPolicy(domain, state):
+def random_policy(domain, state):
     return rdm.choice(Domain.VALID_ACTIONS)
 
 
-seen = set()
-def explorePolicy(domain, positon):
-    arg = seen
-    for action in domain.VALID_ACTIONS:
-        if not ((positon, action) in seen):
-            arg.add((positon, action))
-            return action
-    return rdm.choice(domain.VALID_ACTIONS)
+DDomain = Domain(myBoard)
+SDomain = Domain(myBoard, .25)
 
+
+print("Board :")
+print(myBoard)
 
 # Deterministic Domain without MDP Domain Emulation
-print("Deterministic Domain without MDP Domain Emulation : ", '\n')
-DDomain = Domain(myBoard)
-DAgent = Agent(DDomain, upPolicy)
+print("\n\nDeterministic Domain without MDP Domain Emulation :", '\n')
+DAgent = Agent(DDomain, up_policy)
 
 # DAgent.play(10, display=True)
 
-DAgent.computeExpectedReturn(1)
-DAgent.displayExpectedRetrun(-1)
-DAgent.approximateJ()
-DAgent.displayExpectedRetrun(-1)
+DAgent.expected_return_compute(1)
+DAgent.expected_return_display(-1)
+DAgent.expected_return_approximate()
+DAgent.expected_return_display(-1)
 
-DAgent.computeActionState(1)
-DAgent.displayActionState(-1)
-DAgent.approximateQ()
-DAgent.displayActionState(-1)
+DAgent.action_state_compute(1)
+DAgent.action_state_display(-1)
+DAgent.action_state_approximate()
+DAgent.action_state_display(-1)
 
-DAgent.extractOptimalPolicy(use=True)
-DAgent.displayPolicy()
+DAgent.policy_get_mu(use=True)
+DAgent.policy_display()
 
-DAgent.approximateJ(erase=True)
-DAgent.displayExpectedRetrun(-1)
+DAgent.expected_return_approximate(erase=True)
+DAgent.expected_return_display(-1)
 
 # DAgent.play(10, display=True)
 
 
 # Stochastic Domain without MDP Domain Emulation
-print("\n\nStochastic Domain without MDP Domain Emulation : ", '\n')
-SDomain = Domain(myBoard, .25)
-SAgent = Agent(SDomain, upPolicy)
+print("\n\nStochastic Domain without MDP Domain Emulation :", '\n')
+SAgent = Agent(SDomain, up_policy)
 
 # SAgent.play(10, display=True)
 
-SAgent.computeExpectedReturn(1)
-SAgent.displayExpectedRetrun(-1)
-SAgent.approximateJ()
-SAgent.displayExpectedRetrun(-1)
+SAgent.expected_return_compute(1)
+SAgent.expected_return_display(-1)
+SAgent.expected_return_approximate()
+SAgent.expected_return_display(-1)
 
-SAgent.computeActionState(1)
-SAgent.displayActionState(-1)
-SAgent.approximateQ()
-SAgent.displayActionState(-1)
+SAgent.action_state_compute(1)
+SAgent.action_state_display(-1)
+SAgent.action_state_approximate()
+SAgent.action_state_display(-1)
 
-SAgent.extractOptimalPolicy(use=True)
-DAgent.displayPolicy()
+SAgent.policy_get_mu(use=True)
+DAgent.policy_display()
 
-SAgent.approximateJ(erase=True)
-SAgent.displayExpectedRetrun(-1)
+SAgent.expected_return_approximate(erase=True)
+SAgent.expected_return_display(-1)
 
 # DAgent.play(10, display=True)
 
 
 # Derterminist Domain with MDP Domain Emulation
-print("\n\nDeterministic Domain with MDP Domain Emulation : ", '\n')
-DMDPAgent = Agent(DDomain, upPolicy, useMDPEmulation=True)
+print("\n\nDeterministic Domain with MDP Domain Emulation :", '\n')
+DMDPAgent = MDPAgent(DDomain, up_policy)
 
 # DMDPAgent.play(10, display=True)
 
-DMDPAgent.computeExpectedReturn(1)
-DMDPAgent.displayExpectedRetrun(-1)
-DMDPAgent.approximateJ()
-DMDPAgent.displayExpectedRetrun(-1)
+DMDPAgent.expected_return_compute(1)
+DMDPAgent.expected_return_display(-1)
+DMDPAgent.expected_return_approximate()
+DMDPAgent.expected_return_display(-1)
 
-DMDPAgent.computeActionState(1)
-DMDPAgent.displayActionState(-1)
-DMDPAgent.approximateQ()
-DMDPAgent.displayActionState(-1)
+DMDPAgent.action_state_compute(1)
+DMDPAgent.action_state_display(-1)
+DMDPAgent.action_state_approximate()
+DMDPAgent.action_state_display(-1)
 
-DMDPAgent.extractOptimalPolicy(use=True)
-DMDPAgent.displayPolicy()
+DMDPAgent.policy_get_mu(use=True)
+DMDPAgent.policy_display()
 
-DMDPAgent.approximateJ(erase=True)
-DMDPAgent.displayExpectedRetrun(-1)
+DMDPAgent.expected_return_approximate(erase=True)
+DMDPAgent.expected_return_display(-1)
 
 # DMDPAgent.play(10, display=True)
 
 
 # Stochastic Domain with MDP Domain Emulation
-print("\n\nStochastic Domain with MDP Domain Emulation : ", '\n')
-SMDPAgent = Agent(SDomain, upPolicy, useMDPEmulation=True)
+print("\n\nStochastic Domain with MDP Domain Emulation :", '\n')
+SMDPAgent = MDPAgent(SDomain, up_policy)
 
 # SMDPAgent.play(10, display=True)
 
-SMDPAgent.computeExpectedReturn(1)
-SMDPAgent.displayExpectedRetrun(-1)
-SMDPAgent.approximateJ()
-SMDPAgent.displayExpectedRetrun(-1)
+SMDPAgent.expected_return_compute(1)
+SMDPAgent.expected_return_display(-1)
+SMDPAgent.expected_return_approximate()
+SMDPAgent.expected_return_display(-1)
 
-SMDPAgent.computeActionState(1)
-SMDPAgent.displayActionState(-1)
-SMDPAgent.approximateQ()
-SMDPAgent.displayActionState(-1)
+SMDPAgent.action_state_compute(1)
+SMDPAgent.action_state_display(-1)
+SMDPAgent.action_state_approximate()
+SMDPAgent.action_state_display(-1)
 
-SMDPAgent.extractOptimalPolicy(use=True)
-SMDPAgent.displayPolicy()
+SMDPAgent.policy_get_mu(use=True)
+SMDPAgent.policy_display()
 
-SMDPAgent.approximateJ(erase=True)
-SMDPAgent.displayExpectedRetrun(-1)
+SMDPAgent.expected_return_approximate(erase=True)
+SMDPAgent.expected_return_display(-1)
 
 # SMDPAgent.play(10, display=True)
 
 
-# rdmAgent = Agent(SDomain,randomPolicy)
-# exploAgent = Agent(SDomain, explorePolicy)
-#
-# def convSpeed(Agent):
-#     hts = Agent.play(10000)
-#     htl = []
-#     rSpeed = []
-#     pSpeed = []
-#     for k in range(100):
-#         seen = set()
-#         ht = hts[:(k * 300) + 31]
-#         htl.append(len(ht))
-#         testDomain = MDPDomain(ht)
-#         proba = 0
-#         reward = 0
-#         for i in range(5):
-#             for j in range(5):
-#                 for action in Domain.VALID_ACTIONS:
-#                     reward += SDomain.expectedReward((i, j), action) - testDomain.expectedReward((i, j), action)
-#                     final1 = SDomain.moveResult((i, j), action)
-#                     final2 = testDomain.moveResult((i, j), action)
-#                     for pos, prob in final2:
-#                         for l in range(len(final1)):
-#                             if final1[l][0] == pos:
-#                                 proba += final1[l][1] - prob
-#                                 final1.pop(l)
-#                                 break;
-#                     for pos,prob in final1:
-#                         proba += prob
-#         rSpeed.append(reward)
-#         pSpeed.append(proba)
-#     return htl, rSpeed, pSpeed
-# htl, rdmRSpeed, rdmPSpeed = convSpeed(rdmAgent)
-# htl, exploRSpeed, exploPSpeed = convSpeed(exploAgent)
-# plt.plot(htl,rdmRSpeed, 'r--', label="Reward for the Rdm Player")
-# plt.plot(htl, rdmPSpeed, 'r', label="Probability for the Rdm Player")
-# plt.plot(htl, exploRSpeed, 'b--', label="Reward Convergence for the Explo Player")
-# plt.plot(htl, exploPSpeed, 'b', label="Probability Convergence for the Explo Player")
-# plt.xlabel("Length of the History")
-# plt.ylabel("Cumulated Error")
-# plt.grid()
-# plt.legend()
-# plt.show()
+# Deterministic domain with Q learning
+print("\n\nDeterministic domain with Q learning :", '\n')
+DQAgent = QAgent(DDomain, random_policy)
+
+DQAgent.analyze_trajectory(DQAgent.play(1000))
+
+DQAgent.action_state_display()
+
+DQAgent.expected_return_approximate()
+DQAgent.expected_return_display(-1)
+
+DQAgent.policy_get_mu(use=True)
+DQAgent.policy_display()
+
+DQAgent.expected_return_approximate(erase=True)
+DQAgent.expected_return_display(-1)
+
+
+# Stochastic Domain with Q-learning
+print("\n\nStochastic domain with Q learning :", '\n')
+SQAgent = QAgent(SDomain, random_policy)
+
+SQAgent.analyze_trajectory(SQAgent.play(1000))
+
+SQAgent.action_state_display()
+
+SQAgent.expected_return_approximate()
+SQAgent.expected_return_display(-1)
+
+SQAgent.policy_get_mu(use=True)
+SQAgent.policy_display()
+
+SQAgent.expected_return_approximate(erase=True)
+SQAgent.expected_return_display(-1)
+
+# Intelligent Agent on a deterministic domain
+
+IAgent = IAgent(DDomain, )
